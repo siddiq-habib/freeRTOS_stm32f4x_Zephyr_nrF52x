@@ -26,7 +26,6 @@ include("cmake/gcc-arm-none-eabi.cmake")
 
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
-
 # Enable CMake support for ASM and C languages
 enable_language(C ASM)
 
@@ -39,6 +38,7 @@ add_executable(${CMAKE_PROJECT_NAME})
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
+add_subdirectory(${PROJECT_SOURCE_DIR}/ThirdParty/FreeRTOS)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
@@ -53,6 +53,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+    ${PROJECT_SOURCE_DIR}/ThirdParty/FreeRTOS/include
+    ${PROJECT_SOURCE_DIR}/ThirdParty/FreeRTOS/portable/GCC/ARM_CM4F
 )
 
 # Add project symbols (macros)
@@ -63,6 +65,6 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
-
+    freertos_kernel
     # Add user defined libraries
 )

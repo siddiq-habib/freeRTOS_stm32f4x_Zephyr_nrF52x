@@ -21,7 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+/* Kernel includes. */
+#include "FreeRTOS.h"
+#include "task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,12 +51,21 @@
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-
+static void Test1Task( void *pvParameters );
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void Test1Task(void *pvParameters)
+{
+  UNUSED(pvParameters);
+  while(1)
+  {
+    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+    vTaskDelay(pdMS_TO_TICKS(1000));
 
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -65,6 +76,10 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+    BaseType_t ret = 0;
+  TaskHandle_t taskHandle;
+  ret = xTaskCreate(Test1Task,"Test1", configMINIMAL_STACK_SIZE, (void*)NULL, configMAX_PRIORITIES - 1,&taskHandle);
+  configASSERT(ret == pdPASS);
 
   /* USER CODE END 1 */
 
@@ -92,10 +107,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  vTaskStartScheduler();
   while (1)
   {
-     HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-     HAL_Delay(1000);
+     //HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+     vTaskDelay(pdMS_TO_TICKS(1000));
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -197,6 +213,27 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM9 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM9) {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.
