@@ -1,0 +1,1 @@
+# freeRTOS_stm32f4x_Zephyr_nrF52x
