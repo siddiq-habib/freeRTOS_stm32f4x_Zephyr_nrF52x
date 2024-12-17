@@ -22,8 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* Kernel includes. */
-#include "FreeRTOS.h"
-#include "task.h"
+#include "TaskConfig.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,21 +50,12 @@
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-static void Test1Task( void *pvParameters );
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void Test1Task(void *pvParameters)
-{
-  UNUSED(pvParameters);
-  while(1)
-  {
-    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-    vTaskDelay(pdMS_TO_TICKS(1000));
 
-  }
-}
 /* USER CODE END 0 */
 
 /**
@@ -76,10 +66,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-    BaseType_t ret = 0;
-  TaskHandle_t taskHandle;
-  ret = xTaskCreate(Test1Task,"Test1", configMINIMAL_STACK_SIZE, (void*)NULL, configMAX_PRIORITIES - 1,&taskHandle);
-  configASSERT(ret == pdPASS);
 
   /* USER CODE END 1 */
 
@@ -103,6 +89,7 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
+  CreateApplicationTasks();
   /* USER CODE END 2 */
 
   /* Infinite loop */

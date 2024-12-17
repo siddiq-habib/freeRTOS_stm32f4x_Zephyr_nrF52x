@@ -1,15 +1,13 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
+	"folders": [],
 	"settings": {
 		"files.associations": {
 			"freertos.h": "c",
 			"task.h": "c",
 			"string.h": "c",
-			"timers.h": "c"
+			"timers.h": "c",
+			"taskconfig.h": "c",
+			"main.h": "c"
 		}
 	}
 }
