@@ -1,24 +1,31 @@
 #include "TaskConfig.h"
 
 #include "main.h"
-#include "logging.h"
+#include "log.h"
 
-#define TEST1TASK_STACK_SIZE configMINIMAL_STACK_SIZE
-#define TEST1TASK_TASK_PRIORITY (configMAX_PRIORITIES - 1)
 
+LOG_MODULE_DEFINE(AppTask, LOG_LEVEL_DEBUG);
 
 static StaticTask_t xTaskTest1TCB;
-static StackType_t uxTaskTest1Stack[ configMINIMAL_STACK_SIZE ];
+static StackType_t uxTaskTest1Stack[ TEST1TASK_STACK_SIZE ];
+static StaticTask_t xTaskTest2TCB;
+static StackType_t uxTaskTest2Stack[ TEST2TASK_STACK_SIZE ];
 
 
+extern void Test2Task_Module(void );
 static void Test1Task( void *pvParameters );
+static void Test2Task( void *pvParameters );
 
 
-void CreateApplicationTasks(void)
+void createApplicationTasks(void)
 {
     TaskHandle_t taskHandle = NULL;
     taskHandle =  xTaskCreateStatic(Test1Task, "TaskTest1", TEST1TASK_STACK_SIZE, (void*) NULL,
                                         TEST1TASK_TASK_PRIORITY, uxTaskTest1Stack, &xTaskTest1TCB);
+    configASSERT(taskHandle != NULL);
+
+    taskHandle =  xTaskCreateStatic(Test2Task, "TaskTest2", TEST2TASK_STACK_SIZE, (void*) NULL,
+                                        TEST2TASK_TASK_PRIORITY, uxTaskTest2Stack, &xTaskTest2TCB);
     configASSERT(taskHandle != NULL);
 }
 
@@ -83,13 +90,32 @@ static void Test1Task(void *pvParameters)
   UNUSED(pvParameters);
   while(1)
   {
+   
    LOG_DEBUG("Test1Task Before Toggle\r\n");
-   vTaskDelay(pdMS_TO_TICKS(500));
    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-   LOG_INFO("Test1Task After Toggle\r\n");
+   LOG_INFO("After Toggle\r\n");
    vTaskDelay(pdMS_TO_TICKS(500));
+   taskYIELD();
+   
+   }
+  vTaskDelete(NULL);
+}
 
-  }
+static void Test2Task(void *pvParameters)
+{
+  UNUSED(pvParameters);
+  while(1)
+  {
+   static int counter = 0;
+   counter++;
+
+   if(counter > 0xFFFF)
+      counter = 0;
+
+   Test2Task_Module();
+   LOG_ERROR("Test2Task  %d\r\n", counter);
+   vTaskDelay(pdMS_TO_TICKS(10));
+   }
   vTaskDelete(NULL);
 }
 

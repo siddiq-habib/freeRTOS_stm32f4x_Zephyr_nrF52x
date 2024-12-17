@@ -102,6 +102,14 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
+  .log_data :
+  {
+    . = ALIGN(4);
+    PROVIDE(__start_log_data = .);
+    KEEP(*(.log_data))
+    PROVIDE(__stop_log_data = .);
+  } > FLASH
+
   .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH
   .ARM : {
     __exidx_start = .;

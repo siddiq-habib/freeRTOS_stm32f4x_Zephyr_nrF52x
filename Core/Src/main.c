@@ -23,7 +23,7 @@
 /* USER CODE BEGIN Includes */
 /* Kernel includes. */
 #include "TaskConfig.h"
-#include "logging.h"
+#include "log.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -93,17 +93,16 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  
-  CreateApplicationTasks();
+  logInit();
+  createApplicationTasks();
+  vTaskStartScheduler();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  vTaskStartScheduler();
   while (1)
   {
-     //HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-     vTaskDelay(pdMS_TO_TICKS(1000));
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

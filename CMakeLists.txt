@@ -48,13 +48,16 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    Core/Src/TaskConfig.c
-    Core/Src/logging.c
+    TaskConfig/Src/TaskConfig.c
+    TaskConfig/Src/Task2Config.c
+    Logging/Src/log.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+    ${PROJECT_SOURCE_DIR}/Logging/Inc
+    ${PROJECT_SOURCE_DIR}/TaskConfig/Inc
     ${PROJECT_SOURCE_DIR}/ThirdParty/FreeRTOS/include
     ${PROJECT_SOURCE_DIR}/ThirdParty/FreeRTOS/portable/GCC/ARM_CM4F
 )
