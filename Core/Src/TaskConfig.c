@@ -1,6 +1,7 @@
 #include "TaskConfig.h"
 
 #include "main.h"
+#include "logging.h"
 
 #define TEST1TASK_STACK_SIZE configMINIMAL_STACK_SIZE
 #define TEST1TASK_TASK_PRIORITY (configMAX_PRIORITIES - 1)
@@ -82,8 +83,11 @@ static void Test1Task(void *pvParameters)
   UNUSED(pvParameters);
   while(1)
   {
-    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-    vTaskDelay(pdMS_TO_TICKS(1000));
+   LOG_DEBUG("Test1Task Before Toggle\r\n");
+   vTaskDelay(pdMS_TO_TICKS(500));
+   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+   LOG_INFO("Test1Task After Toggle\r\n");
+   vTaskDelay(pdMS_TO_TICKS(500));
 
   }
   vTaskDelete(NULL);

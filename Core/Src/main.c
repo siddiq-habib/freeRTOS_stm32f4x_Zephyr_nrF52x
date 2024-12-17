@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 /* Kernel includes. */
 #include "TaskConfig.h"
+#include "logging.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -92,6 +93,7 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  
   CreateApplicationTasks();
   /* USER CODE END 2 */
 
