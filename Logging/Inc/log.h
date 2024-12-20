@@ -23,6 +23,18 @@ extern "C" {
    
 #define LOG_DEBUG(...) Z_LOG(LOG_LEVEL_DEBUG, __VA_ARGS__)
 
+#define LOG_HEXDUMP_ERROR(_data, _length) \
+    Z_LOG_HEXDUMP(LOG_LEVEL_ERROR, _data, _length)
+
+#define LOG_HEXDUMP_WARN(_data, _length) \
+    Z_LOG_HEXDUMP(LOG_LEVEL_WARN, _data, _length)
+
+#define LOG_HEXDUMP_INFO(_str, _data, _length) \
+    Z_LOG_HEXDUMP(LOG_LEVEL_INFO, _str, _data, _length)
+
+#define LOG_HEXDUMP_DEBUG(_data, _length) \
+    Z_LOG_HEXDUMP(LOG_LEVEL_DEBUG, _data, _length)
+
 
 /* Dynamic module-specific declarations */
 #define LOG_MODULE_DECLARE(_name) \

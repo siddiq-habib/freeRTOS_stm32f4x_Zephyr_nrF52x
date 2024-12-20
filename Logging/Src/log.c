@@ -46,8 +46,7 @@ static StackType_t logTaskStack[LOG_TASK_STACK_SIZE];  // Static stack for the t
 static SemaphoreHandle_t txCompleteSemaphore;
 static StaticSemaphore_t txCompleteSemaphoreBuffer;
 
-// Declare and initialize a static buffer for the mutex
-static StaticSemaphore_t xMutexBuffer;
+// Declare the mutex
 static SemaphoreHandle_t xMutex;
 
 
@@ -86,7 +85,7 @@ void logInit(void) {
     txCompleteSemaphore = xSemaphoreCreateBinaryStatic(&txCompleteSemaphoreBuffer);
     configASSERT(txCompleteSemaphore != NULL);
 
-    xMutex = xSemaphoreCreateMutexStatic(&xMutexBuffer);
+    xMutex = xSemaphoreCreateRecursiveMutex();
     configASSERT(xMutex != NULL);
 
     TaskHandle_t logTaskHandle;
@@ -112,13 +111,43 @@ void logInit(void) {
     configASSERT(logTaskHandle != NULL);
 }
 
-/* Enqueue a log message */
-void logEnqueue(uint8_t level,  const struct log_source_const_data * pcurrent_log_data,  const char *fmt, ...) {
-    
-    configASSERT((((uint8_t*)pcurrent_log_data >= (uint8_t*)__start_log_data) && 
-                    ((uint8_t*)pcurrent_log_data < (uint8_t*)__stop_log_data)));
+void logEnqueue( LogMessage_t *pLogMsg) {
 
-    if(level <= pcurrent_log_data->level)
+    /* Determine context: ISR or task */
+    if (xPortIsInsideInterrupt()) {
+        /* ISR context */
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        if (xQueueSendFromISR(logQueue, pLogMsg, &xHigherPriorityTaskWoken) != pdPASS) {
+            /* Handle queue full in ISR (optional, e.g., increment a missed log counter) */
+        }
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    } else {
+        if (xSemaphoreTakeRecursive(xMutex, portMAX_DELAY) == pdTRUE)
+        {
+            /* Send to the queue (non-blocking in task context) */
+            BaseType_t retLogQue;
+            retLogQue = xQueueSend(logQueue, pLogMsg, 0);
+
+            if (retLogQue != pdPASS) {
+                /* Queue is full, remove the oldest message and add the new one */
+                LogMessage_t tempMsg; // Temporary variable to discard the oldest message
+                xQueueReceive(logQueue, &tempMsg, 0); // Remove the oldest message
+                retLogQue = xQueueSend(logQueue, pLogMsg, 0); // Add the new message
+                configASSERT(retLogQue == pdPASS); // Ensure the send succeeds
+            }
+            // Release the mutex
+            xSemaphoreGiveRecursive(xMutex);
+        }
+    }
+}
+
+/* Add the proper Formatting and then Enqueue a log message */
+void formatLogAndEnqueue(uint8_t level,  const struct log_source_const_data * plog_data,  const char *fmt, ...) {
+    
+    configASSERT((((uint8_t*)plog_data >= (uint8_t*)__start_log_data) && 
+                    ((uint8_t*)plog_data < (uint8_t*)__stop_log_data)));
+
+    if(level <= plog_data->level)
     {
         LogMessage_t logMsg;
         va_list args;
@@ -142,40 +171,62 @@ void logEnqueue(uint8_t level,  const struct log_source_const_data * pcurrent_lo
         /* Format the log message */
         uint8_t usedLen = strlen(logMsg.message);
         snprintf(logMsg.message + usedLen, LOG_MESSAGE_MAX_LENGTH - usedLen,
-                                 "[%s] :: [%s] ",pcurrent_log_data->name, log_string[level - 1]);
+                                 "[%s] :: [%s] ",plog_data->name, log_string[level - 1]);
 
         va_start(args, fmt);
         usedLen = strlen(logMsg.message); // Include brackets and space
         vsnprintf(logMsg.message + usedLen, LOG_MESSAGE_MAX_LENGTH - usedLen, fmt, args);
         va_end(args);
 
-        /* Determine context: ISR or task */
-        if (xPortIsInsideInterrupt()) {
-            /* ISR context */
-            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-            if (xQueueSendFromISR(logQueue, &logMsg, &xHigherPriorityTaskWoken) != pdPASS) {
-                /* Handle queue full in ISR (optional, e.g., increment a missed log counter) */
-            }
-            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-        } else {
-             if (xSemaphoreTake(xMutex, portMAX_DELAY) == pdTRUE)
-            {
-                /* Send to the queue (non-blocking in task context) */
-                BaseType_t retLogQue;
-                retLogQue = xQueueSend(logQueue, &logMsg, 0);
+        logEnqueue(&logMsg);
 
-                if (retLogQue != pdPASS) {
-                    /* Queue is full, remove the oldest message and add the new one */
-                    LogMessage_t tempMsg; // Temporary variable to discard the oldest message
-                    xQueueReceive(logQueue, &tempMsg, 0); // Remove the oldest message
-                    retLogQue = xQueueSend(logQueue, &logMsg, 0); // Add the new message
-                    configASSERT(retLogQue == pdPASS); // Ensure the send succeeds
-                }
-                // Release the mutex
-                xSemaphoreGive(xMutex);
-            }
-        }
+      
     }
+}
+
+
+void logHexDump(uint8_t level, const char * str, const struct log_source_const_data * plog_data ,
+			const uint8_t*  data, size_t length)
+{
+    configASSERT((((uint8_t*)plog_data >= (uint8_t*)__start_log_data) && 
+                ((uint8_t*)plog_data < (uint8_t*)__stop_log_data)));
+
+    if(level <= plog_data->level)
+    {
+        if (xSemaphoreTakeRecursive(xMutex, portMAX_DELAY) == pdTRUE)
+        {
+            char hexBuffer[49];  // 16 bytes * 3 chars per byte + 1 (null terminator)
+            char asciiBuffer[17]; // 16 bytes + 1 (null terminator)
+
+            formatLogAndEnqueue(level, plog_data, "\nHex Dump (%s : Length(%d)):\n",str, length);
+            for (size_t i = 0; i < length; i++)
+            {
+                // Add hex representation to hexBuffer
+                snprintf(&hexBuffer[(i % 16) * 3], 4, "%02X ", data[i]);
+
+                // Add printable ASCII character or '.' to asciiBuffer
+                asciiBuffer[i % 16] = (data[i] >= 32 && data[i] <= 126) ? data[i] : '.';
+
+                // If line is full or this is the last byte, log the line
+                if ((i % 16 == 15) || (i == length - 1)) {
+                    LogMessage_t logMsg;
+                    asciiBuffer[(i % 16) + 1] = '\0'; // Null-terminate ASCII buffer
+
+                    // Log the hexBuffer and asciiBuffer
+                    
+                    snprintf(logMsg.message,LOG_MESSAGE_MAX_LENGTH , "\t\t\t  %04dX  |%-48s|  %s\n",i - (i % 16),  hexBuffer, asciiBuffer);
+                    logEnqueue(&logMsg);
+
+
+                    // Reset buffers for the next line
+                    memset(hexBuffer, ' ', sizeof(hexBuffer));
+                    hexBuffer[48] = '\0'; // Null-terminate hexBuffer
+                }
+            }
+            //Release the mutex
+            xSemaphoreGiveRecursive(xMutex);
+        }
+    }   
 }
 
 

@@ -26,13 +26,22 @@ struct log_source_const_data {
 	uint8_t level;
 };
 
-void logEnqueue(uint8_t level, const struct log_source_const_data * pcurrent_log_data ,  const char *fmt, ...);
+void logHexDump(uint8_t level, const char* str, const struct log_source_const_data * pcurrent_log_data ,
+			const uint8_t*  data, size_t length);
+void formatLogAndEnqueue(uint8_t level, const struct log_source_const_data * pcurrent_log_data ,  const char *fmt, ...);
+
+
+#define Z_LOG_HEXDUMP(_level, _str, _data, _length) \
+	Z_LOG_HEXDUMP2(_level, _str, pcurrent_log_data,   _data, _length)
+
+#define Z_LOG_HEXDUMP2(_level, _str, _source, _data, _len) \
+	logHexDump(_level, _str,  _source, _data, _len)
 
 
 #define Z_LOG(_level, ...) \
 	Z_LOG2(_level, pcurrent_log_data, __VA_ARGS__)
 
-#define Z_LOG2(_level, _source, ...) logEnqueue(_level,_source, __VA_ARGS__)
+#define Z_LOG2(_level, _source, ...) formatLogAndEnqueue(_level,_source, __VA_ARGS__)
 
 
 #ifdef __cplusplus

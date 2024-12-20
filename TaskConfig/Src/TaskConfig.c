@@ -93,8 +93,9 @@ static void Test1Task(void *pvParameters)
    
    LOG_DEBUG("Test1Task Before Toggle\r\n");
    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-   LOG_INFO("After Toggle\r\n");
+   
    vTaskDelay(pdMS_TO_TICKS(500));
+   LOG_INFO("After Toggle\r\n");
    taskYIELD();
    
    }
