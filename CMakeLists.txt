@@ -33,6 +33,12 @@ enable_language(C ASM)
 project(${CMAKE_PROJECT_NAME})
 message("Build type: " ${CMAKE_BUILD_TYPE})
 
+# Set the output directory for the list files
+set(LIST_OUTPUT_DIR ${CMAKE_BINARY_DIR}/listings)
+
+# Create the output directory if it doesn't exist
+file(MAKE_DIRECTORY ${LIST_OUTPUT_DIR})
+
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
 
@@ -45,13 +51,26 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
 )
 
-# Add sources to executable
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user sources here
+
+# List of source files
+set(SOURCE_FILES
     TaskConfig/Src/TaskConfig.c
     TaskConfig/Src/Task2Config.c
     Logging/Src/log.c
+    # Add other source files here
 )
+
+# Add sources to executable
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${SOURCE_FILES})
+
+# Add compiler flags to generate assembly listings for each source file
+foreach(SOURCE_FILE ${SOURCE_FILES})
+    get_filename_component(REL_PATH ${SOURCE_FILE} DIRECTORY)
+    get_filename_component(FILE_NAME ${SOURCE_FILE} NAME_WE)
+    set(LIST_FILE ${LIST_OUTPUT_DIR}/${REL_PATH}/${FILE_NAME}.list)
+    file(MAKE_DIRECTORY ${LIST_OUTPUT_DIR}/${REL_PATH})
+    set_source_files_properties(${SOURCE_FILE} PROPERTIES COMPILE_FLAGS "-Wa,-adhln=${LIST_FILE}")
+endforeach()
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
