@@ -54,6 +54,7 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # List of source files
 set(SOURCE_FILES
+    Core/Src/stackFrameDump.c
     TaskConfig/Src/TaskConfig.c
     TaskConfig/Src/Task2Config.c
     Logging/Src/log.c
