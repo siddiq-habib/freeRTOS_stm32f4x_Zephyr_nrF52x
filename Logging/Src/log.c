@@ -1,3 +1,23 @@
+/******************************************************************************
+ *  COPYRIGHT (C) 2023 Cresnt Ltd
+ *  All rights reserved.
+ *
+ *  This software is the confidential and proprietary information of
+ *  Cresnt Ltd ("Confidential Information"). You shall not
+ *  disclose such Confidential Information and shall use it only in
+ *  accordance with the terms of the license agreement you entered into
+ *  with Cresnt Ltd.
+ *
+ *  Cresnt Ltd makes no representations or warranties about the
+ *  suitability of the software, either express or implied, including but
+ *  not limited to the implied warranties of merchantability, fitness for
+ *  a particular purpose, or non-infringement. Cresnt Ltd shall not
+ *  be liable for any damages suffered by licensee as a result of using,
+ *  modifying, or distributing this software or its derivatives.
+ *
+ *  Unauthorized copying of this file, via any medium is strictly prohibited.
+ *
+ *****************************************************************************/
 
 #include "stm32f4xx_hal.h"
 
