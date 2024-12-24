@@ -56,6 +56,7 @@
 
 /* External variables --------------------------------------------------------*/
 extern UART_HandleTypeDef huart2;
+extern WWDG_HandleTypeDef hwwdg;
 extern TIM_HandleTypeDef htim9;
 
 /* USER CODE BEGIN EV */
@@ -71,6 +72,21 @@ extern TIM_HandleTypeDef htim9;
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
+
+/**
+  * @brief This function handles Window watchdog interrupt.
+  */
+void WWDG_IRQHandler(void)
+{
+  /* USER CODE BEGIN WWDG_IRQn 0 */
+
+  /* USER CODE END WWDG_IRQn 0 */
+  HAL_WWDG_IRQHandler(&hwwdg);
+  /* USER CODE BEGIN WWDG_IRQn 1 */
+  // Disable all breakpoints and halt the system
+  __asm volatile ("bkpt #0"); // Trigger a breakpoint to halt the system
+  /* USER CODE END WWDG_IRQn 1 */
+}
 
 /**
   * @brief This function handles TIM1 break interrupt and TIM9 global interrupt.

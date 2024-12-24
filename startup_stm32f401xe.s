@@ -251,11 +251,9 @@ g_pfnVectors:
    .thumb_set PendSV_Handler,Default_Handler
 
    .weak      SysTick_Handler
-   .thumb_set SysTick_Handler,Default_Handler              
-  
-   .weak      WWDG_IRQHandler                   
-   .thumb_set WWDG_IRQHandler,Default_Handler      
-                  
+   .thumb_set SysTick_Handler,Default_Handler
+
+               
    .weak      PVD_IRQHandler      
    .thumb_set PVD_IRQHandler,Default_Handler
                
@@ -425,38 +423,24 @@ g_pfnVectors:
     .weak  HardFault_Handler
     .type  HardFault_Handler, %function
 HardFault_Handler:
-    tst lr, #4
-    ite eq
-    mrseq r0, msp
-    mrsne r0, psp
     b StackFrameDump
 
     .section  .text.MemManage_Handler
     .weak  MemManage_Handler
     .type  MemManage_Handler, %function
 MemManage_Handler:
-    tst lr, #4
-    ite eq
-    mrseq r0, msp
-    mrsne r0, psp
     b StackFrameDump
 
     .section  .text.BusFault_Handler
     .weak  BusFault_Handler
     .type  BusFault_Handler, %function
 BusFault_Handler:
-    tst lr, #4
-    ite eq
-    mrseq r0, msp
-    mrsne r0, psp
     b StackFrameDump
 
     .section  .text.UsageFault_Handler
     .weak  UsageFault_Handler
     .type  UsageFault_Handler, %function
 UsageFault_Handler:
-    tst lr, #4
-    ite eq
-    mrseq r0, msp
-    mrsne r0, psp
     b StackFrameDump
+
+

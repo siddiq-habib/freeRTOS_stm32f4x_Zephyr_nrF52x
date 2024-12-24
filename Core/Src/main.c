@@ -44,6 +44,8 @@
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart2;
 
+WWDG_HandleTypeDef hwwdg;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -52,13 +54,17 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_WWDG_Init(void);
 /* USER CODE BEGIN PFP */
-
+void vApplicationIdleHook( void );
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void vApplicationIdleHook( void )
+{
+  HAL_WWDG_Refresh(&hwwdg);
+}
 /* USER CODE END 0 */
 
 /**
@@ -91,6 +97,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_WWDG_Init();
   /* USER CODE BEGIN 2 */
 
   logInit();
@@ -186,6 +193,37 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * @brief WWDG Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_WWDG_Init(void)
+{
+
+  /* USER CODE BEGIN WWDG_Init 0 */
+  // This step is very essential to freeze the WWDG when the system is in debug mode.
+  __HAL_DBGMCU_FREEZE_WWDG();
+  /* USER CODE END WWDG_Init 0 */
+
+  /* USER CODE BEGIN WWDG_Init 1 */
+
+  /* USER CODE END WWDG_Init 1 */
+  hwwdg.Instance = WWDG;
+  hwwdg.Init.Prescaler = WWDG_PRESCALER_8;
+  hwwdg.Init.Window = 0x7f;
+  hwwdg.Init.Counter = 0x7f;
+  hwwdg.Init.EWIMode = WWDG_EWI_ENABLE;
+  if (HAL_WWDG_Init(&hwwdg) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN WWDG_Init 2 */
+
+  /* USER CODE END WWDG_Init 2 */
 
 }
 
