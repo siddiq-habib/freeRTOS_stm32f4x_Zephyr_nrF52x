@@ -437,6 +437,7 @@ MemManage_Handler:
 BusFault_Handler:
     b StackFrameDump
 
+
     .section  .text.UsageFault_Handler
     .weak  UsageFault_Handler
     .type  UsageFault_Handler, %function
@@ -444,3 +445,12 @@ UsageFault_Handler:
     b StackFrameDump
 
 
+.section  .text.WWDG_IRQHandler
+    .weak  WWDG_IRQHandler
+    .type  WWDG_IRQHandler, %function
+WWDG_IRQHandler:
+    tst lr, #4
+    ite eq
+    mrseq r0, msp
+    mrsne r0, psp
+    b WWDG_IRQHandler_C

@@ -6,26 +6,28 @@
 
 LOG_MODULE_DEFINE(AppTask, LOG_LEVEL_DEBUG);
 
+extern void Log_ResetReason();
+
 static StaticTask_t xTaskTest1TCB;
-static StackType_t uxTaskTest1Stack[ TEST1TASK_STACK_SIZE ];
+static StackType_t uxTaskTest1Stack[ MAINTASK_STACK_SIZE ];
 static StaticTask_t xTaskTest2TCB;
-static StackType_t uxTaskTest2Stack[ TEST2TASK_STACK_SIZE ];
+static StackType_t uxTaskTest2Stack[ TESTTASK_STACK_SIZE ];
 
 
 extern void Test2Task_Module(void );
-static void Test1Task( void *pvParameters );
-static void Test2Task( void *pvParameters );
+static void MainTask( void *pvParameters );
+static void TestTask( void *pvParameters );
 
 
 void createApplicationTasks(void)
 {
     TaskHandle_t taskHandle = NULL;
-    taskHandle =  xTaskCreateStatic(Test1Task, "TaskTest1", TEST1TASK_STACK_SIZE, (void*) NULL,
-                                        TEST1TASK_TASK_PRIORITY, uxTaskTest1Stack, &xTaskTest1TCB);
+    taskHandle =  xTaskCreateStatic(MainTask, "TaskMain", MAINTASK_STACK_SIZE, (void*) NULL,
+                                        MAINTASK_TASK_PRIORITY, uxTaskTest1Stack, &xTaskTest1TCB);
     configASSERT(taskHandle != NULL);
 
-    taskHandle =  xTaskCreateStatic(Test2Task, "TaskTest2", TEST2TASK_STACK_SIZE, (void*) NULL,
-                                        TEST2TASK_TASK_PRIORITY, uxTaskTest2Stack, &xTaskTest2TCB);
+    taskHandle =  xTaskCreateStatic(TestTask, "TaskTest", TESTTASK_STACK_SIZE, (void*) NULL,
+                                        TESTTASK_TASK_PRIORITY, uxTaskTest2Stack, &xTaskTest2TCB);
     configASSERT(taskHandle != NULL);
 }
 
@@ -85,21 +87,22 @@ void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBuffer,
 }
 
 
-static void Test1Task(void *pvParameters)
+static void MainTask(void *pvParameters)
 {
-  UNUSED(pvParameters);
-  while(1)
+   UNUSED(pvParameters);
+   LOG_INFO("Main Task\r\n");
+
+   Log_ResetReason();
+   while(1)
    {
-      LOG_DEBUG("Test1Task Before Toggle\r\n");
-      HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-      
-      vTaskDelay(pdMS_TO_TICKS(500));
-      LOG_INFO("After LED Toggle\r\n"); 
+         vTaskDelay(pdMS_TO_TICKS(100));
+         HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+         LOG_INFO("After LED Toggle\r\n"); 
    }
   vTaskDelete(NULL);
 }
 
-static void Test2Task(void *pvParameters)
+static void TestTask(void *pvParameters)
 {
   UNUSED(pvParameters);
   while(1)
@@ -110,8 +113,8 @@ static void Test2Task(void *pvParameters)
    if(counter > 0xFFFF)
       counter = 0;
 
-   Test2Task_Module();
-   LOG_ERROR("Test2Task  %d\r\n", counter);
+   //Test2Task_Module();
+   LOG_INFO("Test2Task  %d\r\n", counter);
    vTaskDelay(pdMS_TO_TICKS(10));
    }
   vTaskDelete(NULL);

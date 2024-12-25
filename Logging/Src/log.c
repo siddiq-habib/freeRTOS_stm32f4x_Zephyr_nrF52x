@@ -33,7 +33,7 @@ extern UART_HandleTypeDef huart2;
 
 /* Logging Queue Size */
 #define LOG_QUEUE_SIZE 10
-#define LOG_MESSAGE_MAX_LENGTH 128
+#define LOG_MESSAGE_MAX_LENGTH 300
 #define UART_TX_TIMEOUT_MS (1000)
 
 

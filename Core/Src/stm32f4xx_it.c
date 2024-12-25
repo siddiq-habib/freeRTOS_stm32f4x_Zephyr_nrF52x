@@ -66,6 +66,19 @@ extern TIM_HandleTypeDef htim9;
 /*           Cortex-M4 Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 
+/**
+  * @brief This function handles Debug monitor.
+  */
+void DebugMon_Handler(void)
+{
+  /* USER CODE BEGIN DebugMonitor_IRQn 0 */
+
+  /* USER CODE END DebugMonitor_IRQn 0 */
+  /* USER CODE BEGIN DebugMonitor_IRQn 1 */
+
+  /* USER CODE END DebugMonitor_IRQn 1 */
+}
+
 /******************************************************************************/
 /* STM32F4xx Peripheral Interrupt Handlers                                    */
 /* Add here the Interrupt Handlers for the used peripherals.                  */
@@ -83,8 +96,7 @@ void WWDG_IRQHandler(void)
   /* USER CODE END WWDG_IRQn 0 */
   HAL_WWDG_IRQHandler(&hwwdg);
   /* USER CODE BEGIN WWDG_IRQn 1 */
-  // Disable all breakpoints and halt the system
-  __asm volatile ("bkpt #0"); // Trigger a breakpoint to halt the system
+
   /* USER CODE END WWDG_IRQn 1 */
 }
 
@@ -117,5 +129,4 @@ void USART2_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
 /* USER CODE END 1 */
