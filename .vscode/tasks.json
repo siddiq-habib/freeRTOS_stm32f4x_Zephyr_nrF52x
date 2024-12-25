@@ -18,7 +18,6 @@
                 "port=swd",
                 "--download",
                 "${command:cmake.launchTargetPath}",
-                // Let CMake extension decide executable: "${command:cmake.launchTargetPath}",
                 "-hardRst", // Hardware reset - if rst pin is connected
                 "-rst", // Software reset (backup)
                 "--start" // Start execution
@@ -29,24 +28,44 @@
             "problemMatcher": []
         },
         {
-            "label": "Build + Flash",
+            "label": "Build + Flash Debug",
             "dependsOrder": "sequence",
             "dependsOn": [
-                "CMake: clean rebuild",
-                "CubeProg: Flash project (SWD)",
+                "CMake: clean rebuild Debug",
+                "CubeProg: Flash project (SWD)"
             ]
         },
-                {
+        {
+            "label": "Build + Flash Release",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "CMake: clean rebuild Release",
+                "CubeProg: Flash project (SWD)"
+            ]
+        },
+        {
             "type": "cmake",
-            "label": "CMake: clean rebuild",
+            "label": "CMake: clean rebuild Debug",
             "command": "cleanRebuild",
             "targets": [
                 "all"
             ],
-            "preset": "${command:cmake.activeBuildPresetName}",
+            "preset": "Debug",
             "group": "build",
             "problemMatcher": [],
-            "detail": "CMake template clean rebuild task"
+            "detail": "CMake clean rebuild task for Debug"
+        },
+        {
+            "type": "cmake",
+            "label": "CMake: clean rebuild Release",
+            "command": "cleanRebuild",
+            "targets": [
+                "all"
+            ],
+            "preset": "Release",
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "CMake clean rebuild task for Release"
         },
         {
             "type": "shell",

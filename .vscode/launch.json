@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Build & Debug Microcontroller - ST-Link",
+            "name": "Build & Debug Microcontroller - ST-Link (Debug)",
             "cwd": "${workspaceFolder}",
             "type": "cortex-debug",
             "executable": "${command:cmake.launchTargetPath}",
@@ -11,7 +11,6 @@
             "device": "STM32F401RETx",
             "interface": "swd",
             "serialNumber": "",
-            "runToMain": false,
             "runToEntryPoint": "reset_handler",
             "svdPath": "${command:device-manager.getDevicePack}",
             "v1": false,
@@ -25,7 +24,7 @@
             ]
         },
         {
-            "name": "Attach to Microcontroller - ST-Link",
+            "name": "Attach to Microcontroller - ST-Link (Debug)",
             "cwd": "${workspaceFolder}",
             "type": "cortex-debug",
             "executable": "${command:cmake.launchTargetPath}",
@@ -34,7 +33,6 @@
             "device": "STM32F401RETx",
             "interface": "swd",
             "serialNumber": "",
-            "runToMain": false,
             "runToEntryPoint": "reset_handler",
             "svdPath": "${command:device-manager.getDevicePack}",
             "v1": false,

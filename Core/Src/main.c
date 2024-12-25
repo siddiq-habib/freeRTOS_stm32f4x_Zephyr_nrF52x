@@ -205,8 +205,10 @@ static void MX_WWDG_Init(void)
 {
 
   /* USER CODE BEGIN WWDG_Init 0 */
+#if defined(DEBUG)
   // This step is very essential to freeze the WWDG when the system is in debug mode.
   __HAL_DBGMCU_FREEZE_WWDG();
+#endif
   /* USER CODE END WWDG_Init 0 */
 
   /* USER CODE BEGIN WWDG_Init 1 */
