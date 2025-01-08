@@ -49,8 +49,14 @@
 *****************************************************************************
 */
 
+SEARCH_DIR(../../BootLoader_mcuboot)
+INCLUDE "memory-sections.ld"
+
+
 /* Entry Point */
 ENTRY(Reset_Handler)
+
+_app_start = ORIGIN(P_APP_START);
 
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
@@ -58,25 +64,18 @@ _estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
 _Min_Heap_Size = 0x200;      /* required amount of heap  */
 _Min_Stack_Size = 0x400; /* required amount of stack */
 
-/* Specify the memory areas */
-MEMORY
-{
-RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 96K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 512K
-}
-
 /* Define output sections */
 SECTIONS
 {
-  /* The startup code goes first into FLASH */
+  /* The startup code goes first into P_APP_START */
   .isr_vector :
   {
     . = ALIGN(4);
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
-  } >FLASH
+  } >P_APP_START
 
-  /* The program code and other data goes into FLASH */
+  /* The program code and other data goes into P_APP_START */
   .text :
   {
     . = ALIGN(4);
@@ -91,16 +90,16 @@ SECTIONS
 
     . = ALIGN(4);
     _etext = .;        /* define a global symbols at end of code */
-  } >FLASH
+  } >P_APP_START
 
-  /* Constant data goes into FLASH */
+  /* Constant data goes into P_APP_START */
   .rodata :
   {
     . = ALIGN(4);
     *(.rodata)         /* .rodata sections (constants, strings, etc.) */
     *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
     . = ALIGN(4);
-  } >FLASH
+  } >P_APP_START
 
   .log_data :
   {
@@ -108,35 +107,35 @@ SECTIONS
     PROVIDE(__start_log_data = .);
     KEEP(*(.log_data))
     PROVIDE(__stop_log_data = .);
-  } > FLASH
+  } > P_APP_START
 
-  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH
+  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >P_APP_START
   .ARM : {
     __exidx_start = .;
     *(.ARM.exidx*)
     __exidx_end = .;
-  } >FLASH
+  } >P_APP_START
 
   .preinit_array     :
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array*))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  } >FLASH
+  } >P_APP_START
   .init_array :
   {
     PROVIDE_HIDDEN (__init_array_start = .);
     KEEP (*(SORT(.init_array.*)))
     KEEP (*(.init_array*))
     PROVIDE_HIDDEN (__init_array_end = .);
-  } >FLASH
+  } >P_APP_START
   .fini_array :
   {
     PROVIDE_HIDDEN (__fini_array_start = .);
     KEEP (*(SORT(.fini_array.*)))
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
-  } >FLASH
+  } >P_APP_START
 
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);
@@ -151,7 +150,7 @@ SECTIONS
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
-  } >RAM AT> FLASH
+  } >RAM AT> P_APP_START
 
   
   /* Uninitialized data section */
