@@ -12,13 +12,27 @@
             "interface": "swd",
             "serialNumber": "",
             "runToEntryPoint": "reset_handler",
-            "svdPath": "${command:device-manager.getDevicePack}",
-            "v1": false,
+            //"svdPath": "${command:device-manager.getDevicePack}",
+            "showDevDebugOutput": "parsed",
+            "postStartSessionCommands": [   //"runToEntryPoint" cannot be set or it will take precedence over this
+                "monitor halt",
+                "set *(void**)0xE000ED08 = *(void *)0x08020200",  //VTOR Register to provide vector table offset to.
+                "set $sp = **(void **)0x08020200",    //Setting stack pointer to pointer at address
+                "set $pc = **(void **)0x08020204",    //Setting program counter to pointer at address
+            ],
+            "postRestartCommands": [
+                "monitor halt",
+                "set *(void**)0xE000ED08 = *(void *)0x08020200",  //VTOR Register to provide vector table offset to.
+                "set $sp = **(void **)0x08020200",    //Setting stack pointer to pointer at address
+                "set $pc = **(void **)0x08020204",    //Setting program counter to pointer at address
+            ],
+            "breakAfterReset": false,
+            "svdFile": "${config:STM32VSCodeExtension.cubeCLT.path}/STMicroelectronics_CMSIS_SVD/STM32F401.svd",
             "serverpath": "${config:STM32VSCodeExtension.cubeCLT.path}/STLink-gdb-server/bin/ST-LINK_gdbserver",
             "stm32cubeprogrammer": "${config:STM32VSCodeExtension.cubeCLT.path}/STM32CubeProgrammer/bin",
             "stlinkPath": "${config:STM32VSCodeExtension.cubeCLT.path}/STLink-gdb-server/bin/ST-LINK_gdbserver",
             "armToolchainPath": "${config:STM32VSCodeExtension.cubeCLT.path}/GNU-tools-for-STM32/bin",
-            "gdbPath": "${config:STM32VSCodeExtension.cubeCLT.path}/GNU-tools-for-STM32/bin/arm-none-eabi-gdb",
+            "gdbPath": "${config:STM32VSCodeExtension.cubeCLT.path}/GNU-tools-for-STM32/bin/arm-none-eabi-gdb.exe",
             "serverArgs": [
                 "-m", "0"
             ]
@@ -33,9 +47,22 @@
             "device": "STM32F401RETx",
             "interface": "swd",
             "serialNumber": "",
-            "runToEntryPoint": "reset_handler",
-            "svdPath": "${command:device-manager.getDevicePack}",
-            "v1": false,
+            "rtos": "FreeRTOS",
+            "showDevDebugOutput": "parsed",
+            "postStartSessionCommands": [   //"runToEntryPoint" cannot be set or it will take precedence over this
+                "monitor halt",
+                "set *(void**)0xE000ED08 = *(void *)0x08020200",  //VTOR Register to provide vector table offset to.
+                "set $sp = **(void **)0x08020200",    //Setting stack pointer to pointer at address
+                "set $pc = **(void **)0x08020204",    //Setting program counter to pointer at address
+            ],
+            "postRestartCommands": [
+                "monitor halt",
+                "set *(void**)0xE000ED08 = *(void *)0x08020200",  //VTOR Register to provide vector table offset to.
+                "set $sp = **(void **)0x08020200",    //Setting stack pointer to pointer at address
+                "set $pc = **(void **)0x08020204",    //Setting program counter to pointer at address
+            ],
+            "breakAfterReset": false,
+            "svdFile": "${config:STM32VSCodeExtension.cubeCLT.path}/STMicroelectronics_CMSIS_SVD/STM32F401.svd",
             "serverpath": "${config:STM32VSCodeExtension.cubeCLT.path}/STLink-gdb-server/bin/ST-LINK_gdbserver",
             "stm32cubeprogrammer": "${config:STM32VSCodeExtension.cubeCLT.path}/STM32CubeProgrammer/bin",
             "stlinkPath": "${config:STM32VSCodeExtension.cubeCLT.path}/STLink-gdb-server/bin/ST-LINK_gdbserver",

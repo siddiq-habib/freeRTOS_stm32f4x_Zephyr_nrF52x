@@ -20,7 +20,7 @@
                 "${command:cmake.launchTargetPath}",
                 "-hardRst", // Hardware reset - if rst pin is connected
                 "-rst", // Software reset (backup)
-                "--start" // Start execution
+                "--start", "0x08020200" // Start execution from address 0x08020200
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

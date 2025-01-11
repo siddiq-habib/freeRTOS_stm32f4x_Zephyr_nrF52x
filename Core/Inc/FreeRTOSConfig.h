@@ -46,6 +46,15 @@
 	extern uint32_t SystemCoreClock;
 #endif
 
+
+#define configRECORD_STACK_HIGH_ADDRESS    1
+/* To get runtime stats, modify the following macro in FreeRTOSConfig.h */
+#define configGENERATE_RUN_TIME_STATS 1 /* 1: generate runtime statistics; 0: no runtime statistics */
+/* Also, add the following two macros to provide a high speed counter -- something at least 10x faster than
+** your RTOS scheduler tick. One strategy could be to use a HW counter and sample its current value when needed
+*/
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() /* Define this to initialize your timer/counter */
+#define portGET_RUN_TIME_COUNTER_VALUE()          /* Define this to sample the timer/counter */
 #define configUSE_PREEMPTION			1
 #define configUSE_IDLE_HOOK				1
 #define configUSE_TICK_HOOK				0
