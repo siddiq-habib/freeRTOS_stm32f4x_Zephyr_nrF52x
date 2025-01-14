@@ -112,7 +112,7 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND python ${PROJECT_SOURCE_DIR}/BootLoader_mcuboot/ThirdParty/mcuboot/scripts/imgtool.py 
-    sign --header-size 0x200 --align 4 --slot-size 0x30000 --version 1.0.0 --pad-header
+    sign --header-size 0x100 --align 4 --slot-size 0x30000 --version 1.0.0 --pad-header
     ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin 
     ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}_with_Hdr.bin
     COMMENT "Signing binary file with imgtool"

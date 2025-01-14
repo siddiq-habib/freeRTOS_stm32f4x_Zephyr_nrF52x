@@ -16,15 +16,15 @@
             "showDevDebugOutput": "parsed",
             "postStartSessionCommands": [   //"runToEntryPoint" cannot be set or it will take precedence over this
                 "monitor halt",
-                "set *(void**)0xE000ED08 = *(void *)0x08020200",  //VTOR Register to provide vector table offset to.
-                "set $sp = **(void **)0x08020200",    //Setting stack pointer to pointer at address
-                "set $pc = **(void **)0x08020204",    //Setting program counter to pointer at address
+                "set *(void**)0xE000ED08 = *(void *)0x08020100",  //VTOR Register to provide vector table offset to.
+                "set $sp = **(void **)0x08020100",    //Setting stack pointer to pointer at address
+                "set $pc = **(void **)0x08020104",    //Setting program counter to pointer at address
             ],
             "postRestartCommands": [
                 "monitor halt",
-                "set *(void**)0xE000ED08 = *(void *)0x08020200",  //VTOR Register to provide vector table offset to.
-                "set $sp = **(void **)0x08020200",    //Setting stack pointer to pointer at address
-                "set $pc = **(void **)0x08020204",    //Setting program counter to pointer at address
+                "set *(void**)0xE000ED08 = *(void *)0x08020100",  //VTOR Register to provide vector table offset to.
+                "set $sp = **(void **)0x08020100",    //Setting stack pointer to pointer at address
+                "set $pc = **(void **)0x08020104",    //Setting program counter to pointer at address
             ],
             "breakAfterReset": false,
             "svdFile": "${config:STM32VSCodeExtension.cubeCLT.path}/STMicroelectronics_CMSIS_SVD/STM32F401.svd",
@@ -47,19 +47,18 @@
             "device": "STM32F401RETx",
             "interface": "swd",
             "serialNumber": "",
-            "rtos": "FreeRTOS",
             "showDevDebugOutput": "parsed",
             "postStartSessionCommands": [   //"runToEntryPoint" cannot be set or it will take precedence over this
                 "monitor halt",
-                "set *(void**)0xE000ED08 = *(void *)0x08020200",  //VTOR Register to provide vector table offset to.
-                "set $sp = **(void **)0x08020200",    //Setting stack pointer to pointer at address
-                "set $pc = **(void **)0x08020204",    //Setting program counter to pointer at address
+                "set *(void**)0xE000ED08 = *(void *)0x08020100",  //VTOR Register to provide vector table offset to.
+                "set $sp = **(void **)0x08020100",    //Setting stack pointer to pointer at address
+                "set $pc = **(void **)0x08020104",    //Setting program counter to pointer at address
             ],
             "postRestartCommands": [
                 "monitor halt",
-                "set *(void**)0xE000ED08 = *(void *)0x08020200",  //VTOR Register to provide vector table offset to.
-                "set $sp = **(void **)0x08020200",    //Setting stack pointer to pointer at address
-                "set $pc = **(void **)0x08020204",    //Setting program counter to pointer at address
+                "set *(void**)0xE000ED08 = *(void *)0x08020100",  //VTOR Register to provide vector table offset to.
+                "set $sp = **(void **)0x08020100",    //Setting stack pointer to pointer at address
+                "set $pc = **(void **)0x08020104",    //Setting program counter to pointer at address
             ],
             "breakAfterReset": false,
             "svdFile": "${config:STM32VSCodeExtension.cubeCLT.path}/STMicroelectronics_CMSIS_SVD/STM32F401.svd",

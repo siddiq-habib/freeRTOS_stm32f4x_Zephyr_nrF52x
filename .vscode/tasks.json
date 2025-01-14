@@ -17,10 +17,11 @@
                 "--connect",
                 "port=swd",
                 "--download",
-                "${command:cmake.launchTargetPath}",
+                "${workspaceFolder}/build/Debug/FreeRTOS_with_Hdr.bin",
+                "0x08020000", // Specify the write address
                 "-hardRst", // Hardware reset - if rst pin is connected
                 "-rst", // Software reset (backup)
-                "--start", "0x08020200" // Start execution from address 0x08020200
+                "--start", "0x08020100" // Start execution from address 0x08020200
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
