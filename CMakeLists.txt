@@ -114,7 +114,7 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND python ${PROJECT_SOURCE_DIR}/BootLoader_mcuboot/ThirdParty/mcuboot/scripts/imgtool.py 
     sign -k ${PROJECT_SOURCE_DIR}/BootLoader_mcuboot/ThirdParty/mcuboot/enc-ec256-priv.pem 
     --header-size 0x100  --confirm 
-    --align 8 --slot-size 0x30000 --pad -M 12
+    --align 4 --slot-size 0x20000 --pad -M 12
     --version 1.0.0 --pad-header
     --overwrite-only
     ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin 
